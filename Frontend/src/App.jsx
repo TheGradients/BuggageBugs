@@ -1,12 +1,13 @@
-import React from 'react'
-import Body from './components/Body'
+import React from "react";
+import { useState } from "react";
 
-const App = () => {
+import LandingPage from "./components/landingPage/LandingPage";
+function App() {
   return (
-   <>
-   <Body/>
-   </>
-  )
+    <>
+      <LandingPage />
+    </>
+  );
 }
 
-export default App
+export default App;
