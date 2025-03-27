@@ -45,7 +45,7 @@ const register = asyncHandler(async (req, res) => {
         .json(new ApiResponse(201, user, "User created successfully"));
 
     } catch (error) {
-        throw new ApiError(500, "Internal Server Error");
+        throw new ApiError(500, error || "Internal Server Error");
     }
 });
 
@@ -116,5 +116,47 @@ const logout = asyncHandler(async (req, res) => {
     }
 });
 
-export { register, login , logout};
+const addDetails = asyncHandler(async (req, res) => {
+    const { firstName , lastName , dateOfBirth } = req.body;
+
+    if(!firstName || !lastName || !dateOfBirth){
+        throw new ApiError(400, "Please fill all fields");
+    }
+
+    const user = await prisma.user.findUnique({
+        where: {
+            id: req.user.id
+        }
+    });
+
+    const dob = dateOfBirth ? new Date(dateOfBirth) : undefined;
+
+    if(!user){
+        throw new ApiError(404, "User not found");
+    }
+
+    try {
+        const updatedUser = await prisma.user.update({
+            where: {
+                id: req.user.id
+            },
+            data: {
+                firstName,
+                lastName,
+                dateOfBirth:dob
+            }
+        });
+
+        res
+        .status(200)
+        .json(new ApiResponse(200, updatedUser, "User details added successfully"));
+
+    } catch (error) {
+        throw new ApiError(500, error || "Internal Server Error");
+    }
+
+    
+});
+
+export { register, login , logout , addDetails};
 
